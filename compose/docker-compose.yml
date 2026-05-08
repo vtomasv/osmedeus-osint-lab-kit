@@ -1,0 +1,133 @@
+name: osmedeus-osint-lab
+
+services:
+  local-dns:
+    image: coredns/coredns:1.11.3
+    container_name: osint-local-dns
+    command: -conf /etc/coredns/Corefile
+    volumes:
+      - ./dns/Corefile:/etc/coredns/Corefile:ro
+      - ./dns/lab.zone:/zones/lab.zone:ro
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.53
+    restart: unless-stopped
+
+  web-alpha:
+    image: nginx:1.27-alpine
+    container_name: web-alpha.lab
+    volumes:
+      - ./targets/web-alpha:/usr/share/nginx/html:ro
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.11
+        aliases:
+          - web-alpha.lab
+          - alpha.academy.lab
+    labels:
+      lab.role: "web-target"
+      lab.level: "basic"
+
+  web-beta:
+    image: nginx:1.27-alpine
+    container_name: web-beta.lab
+    volumes:
+      - ./targets/web-beta:/usr/share/nginx/html:ro
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.12
+        aliases:
+          - web-beta.lab
+          - beta.academy.lab
+    labels:
+      lab.role: "web-target"
+      lab.level: "intermediate"
+
+  blog-gamma:
+    image: nginx:1.27-alpine
+    container_name: blog-gamma.lab
+    volumes:
+      - ./targets/blog-gamma:/usr/share/nginx/html:ro
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.13
+        aliases:
+          - blog-gamma.lab
+          - gamma.academy.lab
+    labels:
+      lab.role: "blog-target"
+      lab.level: "intermediate"
+
+  mail-delta:
+    image: mailhog/mailhog:v1.0.1
+    container_name: mail-delta.lab
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.14
+        aliases:
+          - mail-delta.lab
+          - smtp.academy.lab
+    labels:
+      lab.role: "mail-target"
+      lab.level: "advanced"
+
+  student-console:
+    build:
+      context: ./student-console
+    container_name: student-console
+    dns:
+      - 172.28.0.53
+    depends_on:
+      - local-dns
+      - web-alpha
+      - web-beta
+      - blog-gamma
+      - mail-delta
+    volumes:
+      - ./reports:/lab/reports
+      - ./scripts:/lab/scripts:ro
+    working_dir: /lab
+    command: sleep infinity
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.100
+    labels:
+      lab.role: "analyst-workstation"
+
+  osmedeus:
+    image: j3ssie/osmedeus:latest
+    container_name: osmedeus-runner
+    dns:
+      - 172.28.0.53
+    depends_on:
+      - local-dns
+      - web-alpha
+      - web-beta
+      - blog-gamma
+      - mail-delta
+    volumes:
+      - osmedeus-base:/root/osmedeus-base
+      - osmedeus-workspaces:/root/workspaces-osmedeus
+      - ./reports:/reports
+      - ./scripts:/lab/scripts:ro
+      - ./targets.txt:/lab/targets.txt:ro
+      - ./osmedeus/workflows:/root/osmedeus-base/workflows/lab:ro
+    working_dir: /lab
+    entrypoint: ["/bin/bash", "-lc"]
+    command: "tail -f /dev/null"
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.10
+    labels:
+      lab.role: "osmedeus-runner"
+
+networks:
+  osint-lab:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+
+volumes:
+  osmedeus-base:
+  osmedeus-workspaces:

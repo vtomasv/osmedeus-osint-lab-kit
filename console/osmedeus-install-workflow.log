@@ -1,0 +1,13 @@
+⚠ Existing workflow folder detected!
+⚠ Path: /home/ubuntu/osmedeus-base/workflows
+⚠ This operation will REMOVE the existing workflow folder and all its contents.
+
+Do you want to continue? [y/N]: ◆ Using default workflow URL
+  • https://github.com/osmedeus/osmedeus-workflow.git
+◆ Installing workflows from: https://github.com/osmedeus/osmedeus-workflow.git
+◆ Fetching source...
+◆ Removing existing workflows...
+◆ Installing new workflows...
+✔ Workflows installed successfully to /home/ubuntu/osmedeus-base/workflows
+◆ Loaded 36 workflows (12 flows, 24 modules)
+  ϟ Run osmedeus workflow ls to see workflow details

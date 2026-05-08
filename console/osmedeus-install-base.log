@@ -1,0 +1,277 @@
+◆ Using default preset URL
+  • https://github.com/osmedeus/osmedeus-base.git
+◆ Installing base folder from: https://github.com/osmedeus/osmedeus-base.git
+◆ Backing up settings...
+◆ Fetching source...
+◆ Removing existing base folder...
+◆ Installing new base folder...
+◆ Previous settings backed up to: /home/ubuntu/osmedeus-base/backup-osm-settings.yaml
+✔ Base folder installed successfully to /home/ubuntu/osmedeus-base
+✔ Base installed from: https://github.com/osmedeus/osmedeus-base.git
+
+◆ Using default workflow URL
+  • https://github.com/osmedeus/osmedeus-workflow.git
+◆ Installing workflows from: https://github.com/osmedeus/osmedeus-workflow.git
+◆ Fetching source...
+◆ Installing new workflows...
+✔ Workflows installed successfully to /home/ubuntu/osmedeus-base/workflows
+✔ Workflows installed from: https://github.com/osmedeus/osmedeus-workflow.git
+◆ Loaded 36 workflows (12 flows, 24 modules)
+  ϟ Run osmedeus workflow ls to see workflow details
+
+ϟ First-time setup detected. Installing binaries...
+
+ϟ Installing security binaries from the default registry
+  • This may take a few minutes depending on your network speed
+
+[?25l[?2004h [2K[?2004l[?25h[?1002l[?1003l[?1006l[K  • Installing 24 binaries to: /home/ubuntu/osmedeus-base/external-binaries
+
+[K  ⠋ • alterx amass coreutils curl dnsx ffuf
+[K  ⠋ • findomain git katana kingfisher metabigor naabu
+[K  ⠋ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠋ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  ⠙ • alterx amass coreutils curl dnsx ffuf
+[K  ⠙ • findomain git katana kingfisher metabigor naabu
+[K  ⠙ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠙ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  ⠹ • alterx amass coreutils curl dnsx ffuf
+[K  ⠹ • findomain git katana kingfisher metabigor naabu
+[K  ⠹ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠹ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  ⠸ • alterx amass coreutils curl dnsx ffuf
+[K  ⠸ • findomain git katana kingfisher metabigor naabu
+[K  ⠸ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠸ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  ⠼ • alterx amass coreutils curl dnsx ffuf
+[K  ⠼ • findomain git katana kingfisher metabigor naabu
+[K  ⠼ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠼ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  ⠴ • alterx amass coreutils curl dnsx ffuf
+[K  ⠴ • findomain git katana kingfisher metabigor naabu
+[K  ⠴ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠴ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  ⠦ • alterx amass coreutils curl dnsx ffuf
+[K  ⠦ • findomain git katana kingfisher metabigor naabu
+[K  ⠦ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠦ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  ⠧ • alterx amass coreutils curl dnsx ffuf
+[K  ⠧ • findomain git katana kingfisher metabigor naabu
+[K  ⠧ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠧ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  ⠇ • alterx amass coreutils curl dnsx ffuf
+[K  ⠇ • findomain git katana kingfisher metabigor naabu
+[K  ⠇ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠇ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  ⠏ • alterx amass coreutils curl dnsx ffuf
+[K  ⠏ • findomain git katana kingfisher metabigor naabu
+[K  ⠏ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠏ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠋ • findomain git katana kingfisher metabigor naabu
+[K  ⠋ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠋ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠙ • findomain git katana kingfisher metabigor naabu
+[K  ⠙ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠙ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠹ • findomain git katana kingfisher metabigor naabu
+[K  ⠹ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠹ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠸ • findomain git katana kingfisher metabigor naabu
+[K  ⠸ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠸ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠼ • findomain git katana kingfisher metabigor naabu
+[K  ⠼ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠼ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠴ • findomain git katana kingfisher metabigor naabu
+[K  ⠴ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠴ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠦ • findomain git katana kingfisher metabigor naabu
+[K  ⠦ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠦ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠧ • findomain git katana kingfisher metabigor naabu
+[K  ⠧ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠧ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠇ • findomain git katana kingfisher metabigor naabu
+[K  ⠇ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠇ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠏ • findomain git katana kingfisher metabigor naabu
+[K  ⠏ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠏ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠋ • findomain git katana kingfisher metabigor naabu
+[K  ⠋ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠋ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠙ • findomain git katana kingfisher metabigor naabu
+[K  ⠙ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠙ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠹ • findomain git katana kingfisher metabigor naabu
+[K  ⠹ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠹ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠸ • findomain git katana kingfisher metabigor naabu
+[K  ⠸ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠸ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠼ • findomain git katana kingfisher metabigor naabu
+[K  ⠼ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠼ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  ⠴ • findomain git katana kingfisher metabigor naabu
+[K  ⠴ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠴ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠦ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠦ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠧ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠧ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠇ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠇ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠏ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠏ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠋ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠋ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠙ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠙ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠹ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠹ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠸ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠸ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠼ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠼ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠴ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠴ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠦ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠦ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠧ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠧ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠇ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠇ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠏ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠏ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠋ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠋ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠙ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠙ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠹ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠹ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠸ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠸ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠼ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠼ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠴ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠴ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠦ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠦ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠧ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠧ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠇ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠇ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠏ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠏ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠋ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠋ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠙ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠙ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠹ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠹ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠸ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠸ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠼ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠼ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠴ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠴ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠦ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠦ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠧ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠧ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠇ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠇ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  ⠏ • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  ⠏ • subfinder tldfinder tlsx unzip urlfinder wget
+[4A[K  • alterx amass coreutils curl dnsx ffuf
+[K  • findomain git katana kingfisher metabigor naabu
+[K  • nuclei nuclei-templates pd-httpx puredns rg shuffledns
+[K  • subfinder tldfinder tlsx unzip urlfinder wget
+
+✔ Installed 24 binaries (4 skipped, 0 failed)
+✔ Added PATH to /home/ubuntu/.bashrc
+
+✔ First-time setup complete!

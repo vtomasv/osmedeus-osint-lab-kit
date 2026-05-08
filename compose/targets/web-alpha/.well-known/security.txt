@@ -1,0 +1,3 @@
+Contact: mailto:security@web-alpha.lab
+Policy: https://web-alpha.lab/policy
+Expires: 2027-12-31T00:00:00Z

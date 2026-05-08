@@ -1,0 +1,63 @@
+
+◆ Available Workflows (/home/ubuntu/osmedeus-base/workflows)
+
+| Name                 | Type   | Description                                                  | Required Params | Steps     | Target Types |
+|----------------------|--------|--------------------------------------------------------------|-----------------|-----------|--------------|
+| cidr                 | flow   | IP/CIDR recon - port scan, spider, vuln scan, and content... | Target          | 4 modules | cidr,ip      |
+| domain-extensive     | flow   | Exhaustive recon - full port range with DNS bruteforce an... | Target          | 9 modules | domain       |
+| domain-list-recon    | flow   | Standard recon workflow for a list of domain targets         | Target          | 8 modules | file         |
+| domain-lite          | flow   | Quick recon - subdomain discovery and HTTP fingerprinting... | Target          | 3 modules | domain       |
+| domain-standard      | flow   | Standard recon - subdomains, fingerprints, vulns, and more   | Target          | 9 modules | domain       |
+| fast                 | flow   | Fast recon - subdomain discovery and HTTP fingerprinting ... | Target          | 3 modules | domain       |
+| general (default)    | flow   | Standard recon - subdomains, fingerprints, vulns, and more   | Target          | 9 modules | domain       |
+| repo                 | flow   | Alias for sast workflow                                      | Target          | 1 modules | string       |
+| sast                 | flow   | Analyze a single URL by fingerprinting, crawling, scannin... | Target          | 1 modules | string       |
+| url                  | flow   | Single URL analysis - fingerprint, spider, scan, and disc... | Target          | 4 modules | url,domain   |
+| web-analysis         | flow   | Alias for url workflow                                       | Target          | 4 modules | url,domain   |
+| enum-ipspace         | module | Map IP ranges, ASN ownership, and filter CDN addresses       | -               | 4 steps   | -            |
+| enum-subdomain       | module | Enumerate subdomains via subfinder, amass, assetfinder, a... | Target          | 6 steps   | string       |
+| probe-dns            | module | Resolve DNS records, bruteforce subdomains, and probe HTT... | Target          | 12 steps  | string       |
+| probe-port-fp        | module | Scan common HTTP/HTTPS ports and fingerprint services        | Target          | 3 steps   | string       |
+| probe-port           | module | Scan common HTTP/HTTPS ports and fingerprint services        | Target          | 7 steps   | string       |
+| recon-http-fp        | module | Detect web technologies, CDN, TLS info, and response sign... | Target          | 8 steps   | string       |
+| recon-screenshot     | module | Capture visual snapshots of discovered web assets            | Target          | 4 steps   | string       |
+| recon-spider         | module | Crawl web pages with Katana and hunt for secrets             | Target          | 5 steps   | string       |
+| scan-content         | module | Bruteforce directories and files with ffuf                   | Target          | 5 steps   | string       |
+| scan-vuln            | module | Hunt vulnerabilities with Nuclei templates across all HTT... | Target          | 6 steps   | string       |
+| util-archive         | module | Mine historical URLs from Wayback Machine and CommonCrawl    | Target          | 5 steps   | string       |
+| do-deep-vuln-scan    | module | Hunt vulnerabilities on a single target with Nuclei          | Target          | 2 steps   | string       |
+| do-probe-port        | module | Scan common HTTP/HTTPS ports and fingerprint services        | Target          | 8 steps   | string       |
+| do-recon-http-fp     | module | Fingerprint a single host - tech stack, CDN, TLS, and res... | Target          | 5 steps   | string       |
+| do-recon-spider      | module | Crawl and extract secrets from a single web target           | Target          | 3 steps   | string       |
+| do-scan-content      | module | Bruteforce directories and files on a single target          | -               | 4 steps   | -            |
+| do-scan-repo         | module | Static vulnerability scan and secret detection on git rep... | Target          | 19 steps  | string       |
+| do-scan-vuln         | module | Hunt vulnerabilities on a single target with Nuclei          | Target          | 5 steps   | string       |
+| do-util-normalize    | module | Normalize raw input data into HTTP probe files               | -               | 2 steps   | -            |
+| do-util-prepare-repo | module | Normalize raw input data into HTTP probe files               | -               | 2 steps   | -            |
+
+ℹ "Target" in Required Params is supplied via -t flag (e.g., -t example.com) or each line from -T list-of-targets.txt
+
+◆ Total: 11 flows, 20 modules, 47 unique tags
+◇ Available tags: archive, asn, bruteforce, cdn, cidr, content-discovery, crawl, directory, dis...
+
+◌ Search workflows:
+  ./osmedeus workflow ls <search_term>
+  ./osmedeus workflow ls --search <search_term>
+  ./osmedeus workflow ls --tags recon,fast
+  ./osmedeus workflow ls --show-tags
+
+◌ View workflow details:
+  ./osmedeus workflow show <workflow_name>
+
+◌ Validate workflow:
+  ./osmedeus workflow validate <workflow_name>
+
+◌ Example Run Usage:
+  ./osmedeus run -f <flow_name> -t <target>
+  ./osmedeus run -f general -T list_of_targets.txt
+  ./osmedeus run --threads-hold 10 -t sample.com
+  ./osmedeus run -t sample.com -x <exclude_module>
+  ./osmedeus run -m <module_name> -t <target> --params <key=value>
+
+ϟ Tip: osmedeus run --help for more usage and options
+

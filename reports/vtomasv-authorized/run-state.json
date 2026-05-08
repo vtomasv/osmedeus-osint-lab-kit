@@ -1,0 +1,45 @@
+{
+  "run": {
+    "run_uuid": "c5e78e6a-2965-49b0-9df9-40baace00329",
+    "workflow_name": "enum-subdomain",
+    "workflow_kind": "module",
+    "target": "vtomasv.net",
+    "params": {
+      "exclude_modules": "",
+      "fuzzy_exclude_modules": "",
+      "heuristics_check": "basic",
+      "space_name": "",
+      "tactic": "default",
+      "target": "vtomasv.net",
+      "target_file": "",
+      "threads_hold": "0",
+      "workspaces_folder": ""
+    },
+    "status": "completed",
+    "workspace": "vtomasv.net",
+    "started_at": "2026-05-08T21:09:48.02776Z",
+    "completed_at": "2026-05-08T17:10:00.477310919-04:00",
+    "total_steps": 6,
+    "completed_steps": 7,
+    "hooks_enabled": false,
+    "run_mode": "local",
+    "run_priority": "critical"
+  },
+  "workspace": {
+    "name": "vtomasv.net",
+    "local_path": "/home/ubuntu/workspaces-osmedeus/vtomasv.net",
+    "total_assets": 0,
+    "total_subdomains": 0,
+    "total_urls": 0,
+    "total_vulns": 0,
+    "vuln_critical": 0,
+    "vuln_high": 0,
+    "vuln_medium": 0,
+    "vuln_low": 0,
+    "vuln_potential": 0,
+    "risk_score": 0,
+    "last_run": "2026-05-08T21:09:48.077979Z",
+    "run_workflow": "enum-subdomain"
+  },
+  "updated_at": "2026-05-08T17:10:00.477371369-04:00"
+}

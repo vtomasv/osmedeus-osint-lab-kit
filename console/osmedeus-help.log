@@ -1,0 +1,110 @@
+
+                                        .;1tfLCL1,
+                                       .,,..;i;f0G;
+                                             ,:,tCC.  ...
+                                             ;i:fCL,1LLtf1i;,
+                                           .,::tCL1LC1::;, .,,
+                                           ;1:tCL,tLt,1:
+                                          ,::tLf, 1Lf;::.
+                                        .ii:tLt.  .1Lf;i1.
+                                        ,:;tf1      1ft;::
+                                     .1;:tf1  ,i1t1,  ift;;1,
+                                    ,i:t;f. ,LLffLL:  tft;i:
+                                    .;:;fff  .LCLLLf, 1ffi:;.
+                                    :fi;Lff1.  ,;;:  ifffi;f;
+                                     .:::tCLLfi:,,:ifLfLt::;.
+                                      ,11:1CCCCCLLLLLLf1;1t:
+                                      .it;:;1fLLLLfft1;:;ti.
+                                         ,:;::;;;;;;;;;;,
+                                           .,::::::::,.
+
+                            Osmedeus Next Generation v5.0.2 by @j3ssie
+
+                            A Modern Orchestration Engine for Security
+
+                                            ¯\_(ツ)_/¯
+
+◆ Description
+  Osmedeus is a powerful workflow engine for executing automated
+  reconnaissance and security assessment workflows.
+
+  It supports both module (single execution units) and flow (multi-module
+  orchestration) workflows with parallel and sequential execution patterns.
+
+▶ Key Features
+  • Execute YAML-defined security workflows
+  • Support for parallel and sequential execution
+  • Distributed scanning with master/worker architecture
+  • Template variables and utility functions
+
+▷ Quick Start
+  # Run a module workflow
+  osmedeus run -m simple-module -t example.com
+
+  # Run a flow workflow
+  osmedeus run -f recon-workflow -t example.com
+
+  # Evaluate a utility function
+  osmedeus func e 'log_info("Hello {{target}}")' -t example.com
+
+  # List available workflows
+  osmedeus workflow list
+
+  # Show all usage examples
+  osmedeus --usage-example
+
+📖 Documentation: https://docs.osmedeus.org
+
+Usage:
+  osmedeus [flags]
+  osmedeus [command]
+
+Available Commands:
+  agent       Run an ACP agent interactively
+  assets      Query and list discovered assets
+  client      Interact with a remote osmedeus server
+  cloud       Cloud infrastructure management commands
+  completion  Generate the autocompletion script for the specified shell
+  config      Manage osmedeus configuration
+  db          Database management commands
+  eval        Evaluate a script (shorthand for 'func eval')
+  function    Execute and test utility functions
+  health      Check and fix environment health (alias for 'osmedeus install validate')
+  help        Help about any command
+  install     Install workflows, base folder, or binaries
+  query       Query scan data (agent-friendly)
+  run         Execute a workflow
+  scan        Execute a workflow (alias for 'run')
+  serve       Start the Osmedeus web server
+  snapshot    Export and import workspace snapshots
+  uninstall   Remove Osmedeus installation (base folder, workspaces, and binary)
+  update      Update osmedeus to the latest version
+  version     Print version information
+  worker      Worker node commands for distributed scanning
+  workflow    Manage workflows
+
+Flags:
+  -b, --base-folder string       base folder containing workflows and settings (default is $HOME/osmedeus-base/)
+      --ci-output-format         output results in JSON format for CI pipelines
+      --debug                    enable debug mode (verbose + debug logging)
+      --disable-color            disable colored output
+      --disable-db               disable database connection (warning: some features unavailable)
+      --disable-logging          disable all logging output
+      --disable-notification     disable all notifications
+      --force                    skip confirmation prompts and force operations
+      --full-usage-example       show full usage with all flags in pager mode
+  -h, --help                     help for osmedeus
+      --json                     output in JSON format
+      --log-file string          path to log file (logs to both console and file)
+      --log-file-tmp             create temporary log file osmedeus-log-<timestamp>.log
+      --settings-file string     settings file path (default is $HOME/osmedeus-base/osm-settings.yaml)
+  -q, --silent                   silent mode - suppress all output except errors
+      --skip-auto-setup          skip automatic first-time setup
+      --spinner                  show spinner animations during execution
+  -H, --usage-example            show comprehensive usage examples for all commands
+  -v, --verbose                  enable verbose output
+      --version                  version for osmedeus
+      --width int                max table width for display (0 = auto-detect terminal width)
+  -F, --workflow-folder string   custom workflow folder (default is $HOME/osmedeus-base/workflows/)
+
+Use "osmedeus [command] --help" for more information about a command.

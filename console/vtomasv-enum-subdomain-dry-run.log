@@ -1,0 +1,117 @@
+ϟ Initiating Osmedeus v5.0.2 - Crafted with <3 by @j3ssie
+
+✔ Workflow loaded: enum-subdomain (module)
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Workflow loaded [90m{"name": "enum-subdomain", "kind": "module"}[0m
+
+⚠ DRY-RUN Mode - No commands will be executed
+════════════════════════════════════════
+│ Workflow: enum-subdomain
+│ Target:   vtomasv.net
+│ Steps:    6
+│ Tactic:   default
+
+✦ Builtin Variables
+  │ BaseFolder:     /home/ubuntu/osmedeus-base
+  │ Binaries:       /home/ubuntu/osmedeus-base/external-binaries
+  │ Data:           /home/ubuntu/osmedeus-base/external-data
+  │ Workspaces:     /home/ubuntu/workspaces-osmedeus
+  │ Output:         /home/ubuntu/workspaces-osmedeus/vtomasv.net
+  │ threads:        10
+  │ baseThreads:    5
+  │ Today:          2026-05-08
+════════════════════════════════════════
+
+◎ Speed Control Parameters:
+ Name             │ Default         │ Required 
+──────────────────┼─────────────────┼──────────
+ subfinderThreads │ {{threads * 6}} │ no       
+
+◐ Toggle Parameters:
+ Name         │ Default │ Required 
+──────────────┼─────────┼──────────
+ enable_amass │ false   │ no       
+
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Starting module execution [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "target": "vtomasv.net", "steps": 6}[0m
+
+⚠ DRY-RUN Mode - No commands will be executed
+════════════════════════════════════════════════════
+◆ Workflow Info
+  │ Workflow:    enum-subdomain
+  │ Kind:        module
+  │ Target:      vtomasv.net
+  │ Steps:       6
+  ╰ Tactic:      default
+
+✦ Builtin Variables
+  │ BaseFolder:  /home/ubuntu/osmedeus-base
+  │ Binaries:    /home/ubuntu/osmedeus-base/external-binaries
+  │ Data:        /home/ubuntu/osmedeus-base/external-data
+  │ Workspaces:  /home/ubuntu/workspaces-osmedeus
+  │ Output:      /home/ubuntu/workspaces-osmedeus/vtomasv.net
+  │ threads:     10
+  │ baseThreads: 5
+  ╰ Today:       2026-05-08
+════════════════════════════════════════════════════
+
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Executing step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "create-output-folders", "type": "function", "dry_run": true}[0m
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m DRY-RUN: Would execute step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "create-output-folders", "step": "create-output-folders", "type": "function", "command": ""}[0m
+▶ Step 1: create-output-folders (function)
+  Would execute functions:
+    • create_folder("/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/")
+
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Executing step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "subfinder-enum", "type": "bash", "dry_run": true}[0m
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m DRY-RUN: Would execute step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "subfinder-enum", "step": "subfinder-enum", "type": "bash", "command": ""}[0m
+▶ Step 2: subfinder-enum (bash)
+  Would execute in bash:
+    • subfinder -d vtomasv.net -provider-config /home/ubuntu/osmedeus-base/external-configs/subfinder-provider-config.yaml -t 60 -o /home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/vtomasv.net-subfinder.txt >/dev/null 2>&1
+
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Executing step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "amass-enum", "type": "bash", "dry_run": true}[0m
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m DRY-RUN: Would execute step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "amass-enum", "step": "amass-enum", "type": "bash", "command": "amass enum -active -d {{Target}[0m} -o [90m{{Output}[0m}/subdomain/[90m{{TargetSpace}[0m}-amass.txt >/dev/null 2>&1"}
+▶ Step 3: amass-enum (bash)
+  Pre-condition: false (skipped in dry-run)
+  Would execute: amass enum -active -d vtomasv.net -o /home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/vtomasv.net-amass.txt >/dev/null 2>&1
+
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Executing step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "additional-sources", "type": "function", "dry_run": true}[0m
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m DRY-RUN: Would execute step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "additional-sources", "step": "additional-sources", "type": "function", "command": ""}[0m
+▶ Step 4: additional-sources (function)
+  Would execute functions:
+    • exec_cmd("findomain -u /home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/vtomasv.net-findomain.txt -t vtomasv.net > /dev/null 2>&1")
+    • exec_cmd("assetfinder -subs-only vtomasv.net > /home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/vtomasv.net-assetfinder.txt")
+
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Executing step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "merge-subdomains", "type": "function", "dry_run": true}[0m
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m DRY-RUN: Would execute step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "merge-subdomains", "step": "merge-subdomains", "type": "function", "command": ""}[0m
+▶ Step 5: merge-subdomains (function)
+  Would execute functions:
+    • append_file("/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/subdomain-vtomasv.net.txt", "/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/vtomasv.net-subfinder.txt")
+    • append_file("/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/subdomain-vtomasv.net.txt", "/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/vtomasv.net-amass.txt")
+    • append_file("/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/subdomain-vtomasv.net.txt", "/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/vtomasv.net-assetfinder.txt")
+    • append_file("/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/subdomain-vtomasv.net.txt", "/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/vtomasv.net-findomain.txt")
+    • exec_cmd("rm -rf /home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/vtomasv.net-*.txt")
+
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Executing step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "subdomain-sort", "type": "function", "dry_run": true}[0m
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m DRY-RUN: Would execute step [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "step": "subdomain-sort", "step": "subdomain-sort", "type": "function", "command": ""}[0m
+▶ Step 6: subdomain-sort (function)
+  Would execute functions:
+    • clean_sub("/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/subdomain-vtomasv.net.txt", "vtomasv.net")
+    • sort_unix("/home/ubuntu/workspaces-osmedeus/vtomasv.net/subdomain/subdomain-vtomasv.net.txt")
+
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Module execution completed [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "total_steps": 6, "completed": 6, "elapsed": "1ms"}[0m
+2026-05-08T17:09:18-04:00 [1m[36mINFO[0m Execution Summary [90m{"workflow": "enum-subdomain", "run_uuid": "2c4a5552-b014-4ea4-9d68-f941869bb8a8", "target": "vtomasv.net", "status": "completed", "duration": 0.001589154, "total_steps": 6, "completed_steps": 6, "failed_steps": 0, "skipped_steps": 0}[0m
+
+▶ Execution Summary
+  Workflow: enum-subdomain
+  Run ID: 2c4a5552-b014-4ea4-9d68-f941869bb8a8
+  Target: vtomasv.net
+  Status: completed
+  Duration: 1ms
+
+∴ Step Results:
+ Status │ Step                  │ Duration 
+────────┼───────────────────────┼──────────
+ ✔      │ create-output-folders │ 0ms      
+ ✔      │ subfinder-enum        │ 0ms      
+ ✔      │ amass-enum            │ 0ms      
+ ✔      │ additional-sources    │ 0ms      
+ ✔      │ merge-subdomains      │ 0ms      
+ ✔      │ subdomain-sort        │ 0ms      
+

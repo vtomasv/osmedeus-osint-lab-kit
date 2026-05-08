@@ -1,0 +1,19 @@
+# Archivos temporales locales
+.DS_Store
+*.tmp
+*.swp
+__pycache__/
+*.pyc
+
+# Artefactos generados localmente
+*.zip
+web_asset_urls.txt
+web_zip_url.txt
+
+# Estado local de trabajo del asistente
+todo.md
+
+# Workspaces y resultados pesados si se ejecutan prácticas adicionales
+workspaces-osmedeus/
+compose/workspaces/
+compose/reports/generated/

@@ -1,0 +1,3 @@
+web-alpha.lab
+web-beta.lab
+blog-gamma.lab
