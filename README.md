@@ -22,10 +22,35 @@ Para levantar el laboratorio local, entra a la carpeta `compose`, construye los 
 ```bash
 cd compose
 docker compose up -d --build
+./scripts/00-preflight.sh
 ./scripts/lab-demo.sh
 ```
 
 El laboratorio crea servicios ficticios en una red privada. Los dominios `.lab` se resuelven dentro del entorno Docker mediante el servicio DNS local, por lo que no representan activos reales en Internet.
+
+
+### Verificación del nodo `osmedeus`
+
+El servicio `osmedeus` está definido como un nodo persistente dentro de Docker Compose. A diferencia de ejecutar la imagen oficial como comando puntual, este laboratorio sobreescribe el `ENTRYPOINT` con `/bin/sh -c`, imprime un banner de arranque, ejecuta una comprobación ligera de la CLI y queda en espera para que los scripts puedan usar `docker compose exec`.
+
+```bash
+cd compose
+docker compose up -d --build
+docker compose ps osmedeus
+docker compose logs --tail=40 osmedeus
+docker compose exec osmedeus osmedeus --help
+./scripts/00-preflight.sh
+```
+
+Si aparece `service "osmedeus" is not running`, elimina el contenedor antiguo y vuelve a levantar solo ese nodo. El comando no borra evidencias ni informes, pero recrea el servicio con la definición persistente.
+
+```bash
+cd compose
+docker compose rm -sf osmedeus
+docker compose pull osmedeus
+docker compose up -d osmedeus
+docker compose logs -f osmedeus
+```
 
 ## Topología del laboratorio
 

@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/_osmedeus-common.sh"
 printf '\n╔══════════════════════════════════════════════════════════════╗\n'
 printf '║        OSMEDEUS OSINT LAB · DEMO DIDÁCTICA AUTORIZADA       ║\n'
 printf '╚══════════════════════════════════════════════════════════════╝\n\n'
 printf '[0] Levantando laboratorio...\n'
 docker compose up -d --build
+ensure_osmedeus_running
 printf '\n[1] Preflight...\n'
 ./scripts/00-preflight.sh
 printf '\n[2] Ejercicio básico dry-run...\n'

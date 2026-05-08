@@ -124,8 +124,23 @@ w(C / 'docker-compose.yml', r'''
           - ./targets.txt:/lab/targets.txt:ro
           - ./osmedeus/workflows:/root/osmedeus-base/workflows/lab:ro
         working_dir: /lab
-        entrypoint: ["/bin/bash", "-lc"]
-        command: "tail -f /dev/null"
+        entrypoint: ["/bin/sh", "-c"]
+        command: |
+          set -eu
+          echo "[osmedeus-lab] nodo Osmedeus iniciado como servicio persistente"
+          echo "[osmedeus-lab] fecha UTC: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "[osmedeus-lab] binario: $(command -v osmedeus || true)"
+          osmedeus --help >/tmp/osmedeus-help.startup.log 2>&1 || true
+          echo "[osmedeus-lab] listo; use: docker compose exec osmedeus osmedeus --help"
+          trap 'echo "[osmedeus-lab] apagando nodo"; exit 0' INT TERM
+          while true; do sleep 3600 & wait $!; done
+        healthcheck:
+          test: ["CMD-SHELL", "command -v osmedeus >/dev/null 2>&1"]
+          interval: 20s
+          timeout: 5s
+          retries: 5
+          start_period: 20s
+        restart: unless-stopped
         networks:
           osint-lab:
             ipv4_address: 172.28.0.10
@@ -266,48 +281,106 @@ w(C / 'osmedeus/workflows/README.md', r'''
 ''')
 
 scripts = {
+'_osmedeus-common.sh': r'''
+#!/usr/bin/env bash
+set -euo pipefail
+
+require_compose_dir() {
+  if [ ! -f "docker-compose.yml" ]; then
+    printf '\n[ERROR] Este script debe ejecutarse desde la carpeta compose/.\n' >&2
+    printf 'Ejemplo: cd compose && ./scripts/00-preflight.sh\n' >&2
+    exit 2
+  fi
+}
+
+ensure_osmedeus_running() {
+  require_compose_dir
+  printf '\n[OSMEDEUS LAB] Asegurando que el nodo osmedeus esté levantado...\n'
+  docker compose up -d osmedeus >/dev/null
+
+  local cid state
+  cid="$(docker compose ps -q osmedeus || true)"
+  if [ -z "$cid" ]; then
+    printf '[ERROR] Docker Compose no devolvió contenedor para el servicio osmedeus.\n' >&2
+    docker compose ps >&2 || true
+    exit 1
+  fi
+
+  for _ in $(seq 1 20); do
+    state="$(docker inspect -f '{{.State.Running}}' "$cid" 2>/dev/null || echo false)"
+    if [ "$state" = "true" ]; then
+      printf '[OK] Servicio osmedeus corriendo en contenedor %s\n' "$cid"
+      return 0
+    fi
+    sleep 1
+  done
+
+  printf '\n[ERROR] El servicio osmedeus no quedó corriendo. Últimos logs:\n' >&2
+  docker compose logs --tail=80 osmedeus >&2 || true
+  printf '\n[DIAGNÓSTICO] Pruebe: docker compose pull osmedeus && docker compose up -d osmedeus && docker compose logs -f osmedeus\n' >&2
+  exit 1
+}
+
+osmedeus_exec() {
+  ensure_osmedeus_running
+  docker compose exec -T osmedeus "$@"
+}
+''',
 '00-preflight.sh': r'''
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/_osmedeus-common.sh"
+require_compose_dir
 printf '\n[OSMEDEUS LAB] Verificación de entorno\n'
 docker --version
 docker compose version
+printf '\n[OSMEDEUS LAB] Levantando servicios mínimos del laboratorio\n'
+docker compose up -d --build
 printf '\n[OSMEDEUS LAB] Servicios esperados\n'
 docker compose ps
+ensure_osmedeus_running
+printf '\n[OSMEDEUS LAB] Logs iniciales de osmedeus\n'
+docker compose logs --tail=30 osmedeus
 printf '\n[OSMEDEUS LAB] Resolución DNS interna desde student-console\n'
 docker compose exec -T student-console sh -lc 'dig +short web-alpha.lab && dig +short web-beta.lab && dig +short blog-gamma.lab'
+printf '\n[OSMEDEUS LAB] Verificación CLI desde el nodo osmedeus\n'
+osmedeus_exec osmedeus --help | sed -n '1,60p'
 ''',
 '01-basic-dry-run.sh': r'''
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/_osmedeus-common.sh"
 printf '\n[01] Básico: listar ayuda y previsualizar workflow sin ejecutar escaneo real\n'
-docker compose exec -T osmedeus osmedeus --help | sed -n '1,80p'
+osmedeus_exec osmedeus --help | sed -n '1,80p'
 printf '\n[01] Dry-run contra dominio ficticio interno\n'
-docker compose exec -T osmedeus osmedeus run -f general -t web-alpha.lab --dry-run | tee reports/basic-dry-run-web-alpha.log
+osmedeus_exec osmedeus run -f general -t web-alpha.lab --dry-run | tee reports/basic-dry-run-web-alpha.log
 ''',
 '02-lab-scan-alpha.sh': r'''
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/_osmedeus-common.sh"
 printf '\n[02] Medio: ejecutar workflow general controlado contra web-alpha.lab\n'
 printf '[ALCANCE] Solo red Docker interna. No usar contra terceros.\n'
-docker compose exec -T osmedeus osmedeus run -f general -t web-alpha.lab -x portscan -X vuln | tee reports/lab-scan-web-alpha.log
+osmedeus_exec osmedeus run -f general -t web-alpha.lab -x portscan -X vuln | tee reports/lab-scan-web-alpha.log
 ''',
 '03-intermediate-multi-target.sh': r'''
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/_osmedeus-common.sh"
 printf '\n[03] Medio: múltiples objetivos internos con targets.txt\n'
-docker compose exec -T osmedeus osmedeus run -m recon -T /lab/targets.txt --concurrency 2 --dry-run | tee reports/intermediate-multi-target-dry-run.log
+osmedeus_exec osmedeus run -m recon -T /lab/targets.txt --concurrency 2 --dry-run | tee reports/intermediate-multi-target-dry-run.log
 ''',
 '04-authorized-vtomasv.sh': r'''
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/_osmedeus-common.sh"
 printf '\n[04] Externo autorizado: workflow responsable para vtomasv.net\n'
 printf '[ALCANCE] Ejecutar solo si Tom confirma autorización sobre vtomasv.net.\n'
 printf '[MODO] Primero se realiza dry-run. Para ejecución real, exportar RUN_REAL=1.\n\n'
-docker compose exec -T osmedeus osmedeus run -m enum-subdomain -t vtomasv.net --dry-run | tee reports/vtomasv-subdomain-dry-run.log
+osmedeus_exec osmedeus run -m enum-subdomain -t vtomasv.net --dry-run | tee reports/vtomasv-subdomain-dry-run.log
 if [ "${RUN_REAL:-0}" = "1" ]; then
   printf '\n[04] RUN_REAL=1 detectado: ejecución real no intrusiva de subdomain.\n'
-  docker compose exec -T osmedeus osmedeus run -m enum-subdomain -t vtomasv.net --timeout 30m | tee reports/vtomasv-subdomain-real.log
+  osmedeus_exec osmedeus run -m enum-subdomain -t vtomasv.net --timeout 30m | tee reports/vtomasv-subdomain-real.log
 else
   printf '\n[04] Ejecución real omitida. Use: RUN_REAL=1 ./scripts/04-authorized-vtomasv.sh\n'
 fi
@@ -315,18 +388,21 @@ fi
 '05-export-report.sh': r'''
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/_osmedeus-common.sh"
 printf '\n[05] Exportar evidencias disponibles desde workspaces-osmedeus\n'
-docker compose exec -T osmedeus sh -lc 'find /root/workspaces-osmedeus -maxdepth 4 -type f | sed -n "1,120p"' | tee reports/workspace-files.txt
+osmedeus_exec sh -lc 'find /root/workspaces-osmedeus -maxdepth 4 -type f | sed -n "1,120p"' | tee reports/workspace-files.txt
 printf '\n[05] Resumen guardado en compose/reports/workspace-files.txt\n'
 ''',
 'lab-demo.sh': r'''
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/_osmedeus-common.sh"
 printf '\n╔══════════════════════════════════════════════════════════════╗\n'
 printf '║        OSMEDEUS OSINT LAB · DEMO DIDÁCTICA AUTORIZADA       ║\n'
 printf '╚══════════════════════════════════════════════════════════════╝\n\n'
 printf '[0] Levantando laboratorio...\n'
 docker compose up -d --build
+ensure_osmedeus_running
 printf '\n[1] Preflight...\n'
 ./scripts/00-preflight.sh
 printf '\n[2] Ejercicio básico dry-run...\n'
@@ -334,7 +410,7 @@ printf '\n[2] Ejercicio básico dry-run...\n'
 printf '\n[3] Ejercicio vtomasv.net en modo dry-run...\n'
 ./scripts/04-authorized-vtomasv.sh || true
 printf '\n[FIN] Revise compose/reports/ y workspaces de Osmedeus.\n'
-'''
+''',
 }
 for name, content in scripts.items():
     p = C / 'scripts' / name
