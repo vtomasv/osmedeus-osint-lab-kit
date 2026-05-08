@@ -37,6 +37,26 @@ ensure_osmedeus_running() {
   exit 1
 }
 
+ensure_osmedeus_web_running() {
+  require_compose_dir
+  printf '\n[OSMEDEUS LAB] Asegurando consola web Osmedeus, Redis y worker...\n'
+  docker compose up -d redis osmedeus-server osmedeus-worker >/dev/null
+
+  for _ in $(seq 1 40); do
+    if docker compose exec -T osmedeus-server sh -lc 'curl -sf http://localhost:8002/health >/dev/null' 2>/dev/null; then
+      printf '[OK] Consola web Osmedeus disponible en http://127.0.0.1:%s\n' "${OSMEDEUS_WEB_PORT:-8002}"
+      printf '[INFO] Usuario local: admin | contraseña: osmedeus-lab-admin\n'
+      return 0
+    fi
+    sleep 2
+  done
+
+  printf '\n[ERROR] La consola web Osmedeus no respondió /health. Últimos logs:\n' >&2
+  docker compose logs --tail=120 redis osmedeus-server osmedeus-worker >&2 || true
+  printf '\n[DIAGNÓSTICO] Pruebe: docker compose up -d redis osmedeus-server osmedeus-worker && docker compose logs -f osmedeus-server\n' >&2
+  exit 1
+}
+
 osmedeus_exec() {
   ensure_osmedeus_running
   docker compose exec -T osmedeus "$@"

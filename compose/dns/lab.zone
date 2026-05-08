@@ -1,9 +1,13 @@
 $ORIGIN lab.
 $TTL 60
-@       IN SOA  local-dns.lab. admin.lab. (2026050801 60 30 120 60)
+@       IN SOA  local-dns.lab. admin.lab. (2026050802 60 30 120 60)
         IN NS   local-dns.lab.
 local-dns       IN A 172.28.0.53
 osmedeus        IN A 172.28.0.10
+redis           IN A 172.28.0.20
+osmedeus-web    IN A 172.28.0.21
+console.osmedeus IN A 172.28.0.21
+osmedeus-worker IN A 172.28.0.22
 web-alpha       IN A 172.28.0.11
 alpha.academy   IN A 172.28.0.11
 web-beta        IN A 172.28.0.12

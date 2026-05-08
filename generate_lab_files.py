@@ -9,6 +9,7 @@ def w(path: Path, content: str):
     path.write_text(textwrap.dedent(content).lstrip(), encoding='utf-8')
 
 w(C / 'docker-compose.yml', r'''
+
     name: osmedeus-osint-lab
 
     services:
@@ -123,6 +124,7 @@ w(C / 'docker-compose.yml', r'''
           - ./scripts:/lab/scripts:ro
           - ./targets.txt:/lab/targets.txt:ro
           - ./osmedeus/workflows:/root/osmedeus-base/workflows/lab:ro
+          - ./osmedeus/osm-settings.lab.yaml:/root/osmedeus-base/osm-settings.yaml:ro
         # La imagen oficial define ENTRYPOINT ["osmedeus"]. Para que el laboratorio
         # quede disponible para `docker compose exec`, se reemplaza por un proceso
         # pasivo y estable, sin mezclar /bin/sh -c con command multiline.
@@ -137,8 +139,106 @@ w(C / 'docker-compose.yml', r'''
         networks:
           osint-lab:
             ipv4_address: 172.28.0.10
+            aliases:
+              - osmedeus.lab
         labels:
           lab.role: "osmedeus-runner"
+
+      redis:
+        image: redis:7-alpine
+        container_name: osmedeus-lab-redis
+        command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+        volumes:
+          - osmedeus-redis-data:/data
+        healthcheck:
+          test: ["CMD", "redis-cli", "ping"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+        restart: unless-stopped
+        networks:
+          osint-lab:
+            ipv4_address: 172.28.0.20
+            aliases:
+              - redis.lab
+        labels:
+          lab.role: "osmedeus-queue"
+
+      osmedeus-server:
+        image: j3ssie/osmedeus:latest
+        container_name: osmedeus-web
+        dns:
+          - 172.28.0.53
+        depends_on:
+          redis:
+            condition: service_healthy
+          local-dns:
+            condition: service_started
+          web-alpha:
+            condition: service_started
+          web-beta:
+            condition: service_started
+          blog-gamma:
+            condition: service_started
+          mail-delta:
+            condition: service_started
+        ports:
+          - "127.0.0.1:${OSMEDEUS_WEB_PORT:-8002}:8002"
+        volumes:
+          - osmedeus-base:/root/osmedeus-base
+          - osmedeus-workspaces:/root/workspaces-osmedeus
+          - ./reports:/reports
+          - ./scripts:/lab/scripts:ro
+          - ./targets.txt:/lab/targets.txt:ro
+          - ./osmedeus/workflows:/root/osmedeus-base/workflows/lab:ro
+          - ./osmedeus/osm-settings.lab.yaml:/root/osmedeus-base/osm-settings.yaml:ro
+        command: ["serve", "--master", "--redis-url", "redis://redis:6379"]
+        healthcheck:
+          test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+          interval: 30s
+          timeout: 10s
+          start_period: 30s
+          retries: 5
+        restart: unless-stopped
+        networks:
+          osint-lab:
+            ipv4_address: 172.28.0.21
+            aliases:
+              - osmedeus-web.lab
+              - console.osmedeus.lab
+        labels:
+          lab.role: "osmedeus-web-console"
+          lab.exposed_port: "8002"
+
+      osmedeus-worker:
+        image: j3ssie/osmedeus:latest
+        container_name: osmedeus-worker
+        dns:
+          - 172.28.0.53
+        depends_on:
+          redis:
+            condition: service_healthy
+          osmedeus-server:
+            condition: service_healthy
+          local-dns:
+            condition: service_started
+        volumes:
+          - osmedeus-base:/root/osmedeus-base
+          - osmedeus-workspaces:/root/workspaces-osmedeus
+          - ./reports:/reports
+          - ./scripts:/lab/scripts:ro
+          - ./targets.txt:/lab/targets.txt:ro
+          - ./osmedeus/workflows:/root/osmedeus-base/workflows/lab:ro
+          - ./osmedeus/osm-settings.lab.yaml:/root/osmedeus-base/osm-settings.yaml:ro
+        command: ["worker", "join", "--redis-url", "redis://redis:6379"]
+        restart: unless-stopped
+        networks:
+          osint-lab:
+            ipv4_address: 172.28.0.22
+            aliases:
+              - osmedeus-worker.lab
+        labels:
+          lab.role: "osmedeus-worker"
 
     networks:
       osint-lab:
@@ -150,6 +250,7 @@ w(C / 'docker-compose.yml', r'''
     volumes:
       osmedeus-base:
       osmedeus-workspaces:
+      osmedeus-redis-data:
 ''')
 
 w(C / 'student-console/Dockerfile', r'''
@@ -175,12 +276,17 @@ w(C / 'dns/Corefile', r'''
 ''')
 
 w(C / 'dns/lab.zone', r'''
+
     $ORIGIN lab.
     $TTL 60
-    @       IN SOA  local-dns.lab. admin.lab. (2026050801 60 30 120 60)
+    @       IN SOA  local-dns.lab. admin.lab. (2026050802 60 30 120 60)
             IN NS   local-dns.lab.
     local-dns       IN A 172.28.0.53
     osmedeus        IN A 172.28.0.10
+    redis           IN A 172.28.0.20
+    osmedeus-web    IN A 172.28.0.21
+    console.osmedeus IN A 172.28.0.21
+    osmedeus-worker IN A 172.28.0.22
     web-alpha       IN A 172.28.0.11
     alpha.academy   IN A 172.28.0.11
     web-beta        IN A 172.28.0.12
@@ -265,6 +371,75 @@ w(C / 'targets/blog-gamma/post-osint.html', f'''
 ''')
 w(C / 'targets/blog-gamma/feed.xml', '<?xml version="1.0"?><rss version="2.0"><channel><title>Gamma Lab</title><item><title>OSINT responsable</title><link>https://blog-gamma.lab/post-osint.html</link></item></channel></rss>')
 
+
+
+w(C / 'osmedeus/osm-settings.lab.yaml', r'''
+
+    # Configuración local del laboratorio Osmedeus OSINT.
+    # No reutilizar estas credenciales en producción: están pensadas para docencia local.
+
+    environment:
+      binaries: "{{base_folder}}/external-binaries"
+      external_data: "{{base_folder}}/external-data"
+      external_configs: "{{base_folder}}/external-configs"
+      workspaces: /root/workspaces-osmedeus
+      workflows: "{{base_folder}}/workflows"
+      snapshot: "{{base_folder}}/snapshot"
+
+    database:
+      db_engine: sqlite
+      db_path: "{{base_folder}}/database-osm.sqlite"
+      connection_timeout: 60
+
+    server:
+      host: "0.0.0.0"
+      port: 8002
+      ui_path: "{{base_folder}}/ui/"
+      workspace_prefix_key: "lab-workspaces"
+      enabled_auth_api: true
+      auth_api_key: "osmedeus-lab-api-key-change-me"
+      simple_user_map_key:
+        admin: "osmedeus-lab-admin"
+      jwt:
+        secret_signing_key: "osmedeus-lab-jwt-secret-change-me-2026"
+        expiration_minutes: 1440
+
+    scan_tactic:
+      aggressive: 20
+      default: 8
+      gently: 3
+
+    redis:
+      host: redis
+      port: 6379
+      username: ""
+      password: ""
+      db: 0
+      connection_timeout: 60
+
+    global_variables: []
+
+    notification:
+      telegram:
+        enabled: false
+        bot_token: ""
+        chat_id: 0
+
+    cdn_storage:
+      enabled: false
+      access_key_id: ""
+      secret_access_key: ""
+      bucket: ""
+      region: ""
+      endpoint: ""
+
+    llm:
+      enabled: false
+      provider: openai
+      api_key: ""
+      model: "gpt-4"
+      base_url: ""
+''')
 w(C / 'osmedeus/workflows/README.md', r'''
     # Workflows locales del laboratorio
 

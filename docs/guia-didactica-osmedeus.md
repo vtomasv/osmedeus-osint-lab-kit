@@ -10,21 +10,24 @@ Osmedeus es un motor de orquestación para ejecutar workflows de reconocimiento 
 
 ## Objetivos de aprendizaje
 
-El laboratorio está diseñado para que un alumno principiante entienda la diferencia entre **enumerar**, **probar conectividad**, **fingerprintear** y **escanear**, mientras que un alumno intermedio o avanzado pueda leer workflows, ajustar parámetros y construir un informe reproducible. La receta usa Docker Compose para levantar objetivos ficticios dentro de una red aislada y separa explícitamente el caso externo autorizado `vtomasv.net`.
+El laboratorio está diseñado para que un alumno principiante entienda la diferencia entre **enumerar**, **probar conectividad**, **fingerprintear** y **escanear**, mientras que un alumno intermedio o avanzado pueda leer workflows, ajustar parámetros y construir un informe reproducible. La receta usa Docker Compose para levantar objetivos ficticios dentro de una red aislada, incorpora la consola web/API de Osmedeus para observar workflows y resultados, y separa explícitamente el caso externo autorizado `vtomasv.net`.
 
 | Nivel | Meta pedagógica | Comando guía | Evidencia esperada |
 |---|---|---|---|
 | Básico | Comprender CLI, alcance, dry-run y estructura de salida. | `./scripts/01-basic-dry-run.sh` | Consola que muestra pasos sin ejecutar acciones. |
-| Medio | Analizar objetivos ficticios `.lab` dentro de Compose. | `./scripts/02-lab-scan-alpha.sh` y `./scripts/03-intermediate-multi-target.sh` | Carpetas de workspace, logs y resultados locales. |
+| Medio | Analizar objetivos ficticios `.lab` dentro de Compose. | `./scripts/02-lab-scan-alpha.sh` y `./scripts/03-intermediate-multi-target.sh` | Carpetas de workspace, logs y resultados visibles desde archivos y consola web. |
 | Complejo | Ejecutar un workflow autorizado y redactar informe. | `RUN_REAL=1 ./scripts/04-authorized-vtomasv.sh` | Informe con comando, fecha, workflow y hallazgos. |
 
 ## Topología del laboratorio
 
-La receta compone una red `172.28.0.0/24` con DNS interno y varios servicios web ficticios. El objetivo es que los alumnos vean tráfico y resultados contra activos controlados, no contra Internet. La documentación oficial de Osmedeus describe despliegues Docker con persistencia de `workspaces-osmedeus` y `osmedeus-base`; esta receta adopta ese patrón para mantener resultados y configuración entre ejecuciones.[3]
+La receta compone una red `172.28.0.0/24` con DNS interno, servicios web ficticios, un runner CLI persistente y el stack web distribuido mínimo de Osmedeus. La documentación pública de Osmedeus indica que la UI se sirve en la raíz del servidor y que los archivos de workspace pueden exponerse bajo `/ws/{workspace_prefix}` cuando se configura `workspace_prefix_key`.[6] El laboratorio adopta esa capacidad para que el instructor pueda revisar workflows, runs, workspaces y artefactos sin depender únicamente de la salida de consola.
 
 | Servicio | Dominio ficticio | IP interna | Rol didáctico |
 |---|---:|---:|---|
-| `osmedeus` | `osmedeus.lab` | `172.28.0.10` | Contenedor donde se invoca el framework. |
+| `osmedeus` | `osmedeus.lab` | `172.28.0.10` | Runner CLI estable para scripts y comandos guiados. |
+| `redis` | `redis.lab` | `172.28.0.20` | Cola interna para coordinación master/worker. |
+| `osmedeus-server` | `console.osmedeus.lab` | `172.28.0.21` | Consola web/API para workflows, runs, workspaces e informes. |
+| `osmedeus-worker` | `osmedeus-worker.lab` | `172.28.0.22` | Worker distribuido para ejecuciones lanzadas desde UI/API. |
 | `web-alpha` | `web-alpha.lab` | `172.28.0.11` | Sitio básico con `robots.txt` y contenido público. |
 | `web-beta` | `web-beta.lab` | `172.28.0.12` | Sitio intermedio con rutas y changelog. |
 | `blog-gamma` | `blog-gamma.lab` | `172.28.0.13` | Blog ficticio para extracción de contenido. |
@@ -43,7 +46,19 @@ docker compose ps
 ./scripts/00-preflight.sh
 ```
 
-La verificación inicial enseña tres preguntas: si los contenedores están arriba, si la resolución interna funciona y si Osmedeus puede listar workflows. Si falla algún punto, la clase debe detenerse y corregir el entorno antes de ejecutar cualquier workflow.
+La verificación inicial enseña cuatro preguntas: si los contenedores están arriba, si la resolución interna funciona, si Osmedeus puede ejecutar la CLI y si la consola web responde `/health`. Si falla algún punto, la clase debe detenerse y corregir el entorno antes de ejecutar cualquier workflow.
+
+## Uso de la consola web
+
+La consola queda publicada solo en la interfaz local del host para reducir exposición accidental durante clases. El acceso recomendado es `http://127.0.0.1:8002`, con usuario `admin` y contraseña `osmedeus-lab-admin`. Estas credenciales son deliberadamente simples porque el entorno es local y didáctico; deben cambiarse si se reutiliza el Compose fuera del laboratorio.
+
+| Revisión en clase | Ruta o función | Propósito |
+|---|---|---|
+| Estado del servidor | `http://127.0.0.1:8002/health` | Confirmar que el servidor web está vivo. |
+| UI principal | `http://127.0.0.1:8002/` | Navegar workflows, runs y vistas disponibles por la UI embebida. |
+| Swagger | `http://127.0.0.1:8002/swagger/index.html` | Mostrar API y endpoints a alumnos avanzados. |
+| Workspaces directos | `http://127.0.0.1:8002/ws/lab-workspaces/` | Ver archivos generados en prácticas locales. |
+| API de workflows | `/osm/api/workflows` | Consultar workflows con JWT o API key. |
 
 ## Ejercicio básico: leer antes de ejecutar
 
@@ -54,7 +69,7 @@ cd compose
 ./scripts/01-basic-dry-run.sh
 ```
 
-El alumno debe identificar el nombre del workflow, el objetivo, las carpetas de salida y las herramientas que se invocarían. En una evaluación práctica, no basta con copiar el comando: el alumno debe explicar el impacto de cada módulo.
+El alumno debe identificar el nombre del workflow, el objetivo, las carpetas de salida y las herramientas que se invocarían. En una evaluación práctica, no basta con copiar el comando: el alumno debe explicar el impacto de cada módulo y luego ubicar desde la consola web dónde se listarían workflows y workspaces.
 
 ## Ejercicio medio: objetivos ficticios internos
 
@@ -66,7 +81,7 @@ cd compose
 ./scripts/03-intermediate-multi-target.sh
 ```
 
-La meta no es “encontrar vulnerabilidades”, sino aprender a construir un inventario reproducible. El informe debe distinguir entre hallazgos informativos, rutas públicas, cabeceras observadas y posibles próximos pasos.
+La meta no es “encontrar vulnerabilidades”, sino aprender a construir un inventario reproducible. El informe debe distinguir entre hallazgos informativos, rutas públicas, cabeceras observadas y posibles próximos pasos. Tras cada ejecución, el instructor puede usar `http://127.0.0.1:8002/ws/lab-workspaces/` para revisar archivos generados y comparar evidencias entre grupos.
 
 ## Ejercicio complejo: flujo autorizado contra vtomasv.net
 
@@ -115,4 +130,4 @@ En Chile, las actividades de OSINT, reconocimiento técnico y análisis de super
 [3]: https://docs.osmedeus.org/getting-started/docker-setup "Docker Installation & Setup — Osmedeus Docs"  
 [4]: https://www.bcn.cl/leychile/navegar?idNorma=1177743 "Ley 21.459 — Biblioteca del Congreso Nacional de Chile"  
 [5]: https://www.bcn.cl/leychile/navegar?idNorma=141599 "Ley 19.628 — Biblioteca del Congreso Nacional de Chile"  
-
+[6]: https://docs.osmedeus.org/api/public "Public Endpoints — Osmedeus Docs"  

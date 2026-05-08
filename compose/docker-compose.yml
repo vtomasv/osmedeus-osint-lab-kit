@@ -112,6 +112,7 @@ services:
       - ./scripts:/lab/scripts:ro
       - ./targets.txt:/lab/targets.txt:ro
       - ./osmedeus/workflows:/root/osmedeus-base/workflows/lab:ro
+      - ./osmedeus/osm-settings.lab.yaml:/root/osmedeus-base/osm-settings.yaml:ro
     # La imagen oficial define ENTRYPOINT ["osmedeus"]. Para que el laboratorio
     # quede disponible para `docker compose exec`, se reemplaza por un proceso
     # pasivo y estable, sin mezclar /bin/sh -c con command multiline.
@@ -126,8 +127,106 @@ services:
     networks:
       osint-lab:
         ipv4_address: 172.28.0.10
+        aliases:
+          - osmedeus.lab
     labels:
       lab.role: "osmedeus-runner"
+
+  redis:
+    image: redis:7-alpine
+    container_name: osmedeus-lab-redis
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - osmedeus-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.20
+        aliases:
+          - redis.lab
+    labels:
+      lab.role: "osmedeus-queue"
+
+  osmedeus-server:
+    image: j3ssie/osmedeus:latest
+    container_name: osmedeus-web
+    dns:
+      - 172.28.0.53
+    depends_on:
+      redis:
+        condition: service_healthy
+      local-dns:
+        condition: service_started
+      web-alpha:
+        condition: service_started
+      web-beta:
+        condition: service_started
+      blog-gamma:
+        condition: service_started
+      mail-delta:
+        condition: service_started
+    ports:
+      - "127.0.0.1:${OSMEDEUS_WEB_PORT:-8002}:8002"
+    volumes:
+      - osmedeus-base:/root/osmedeus-base
+      - osmedeus-workspaces:/root/workspaces-osmedeus
+      - ./reports:/reports
+      - ./scripts:/lab/scripts:ro
+      - ./targets.txt:/lab/targets.txt:ro
+      - ./osmedeus/workflows:/root/osmedeus-base/workflows/lab:ro
+      - ./osmedeus/osm-settings.lab.yaml:/root/osmedeus-base/osm-settings.yaml:ro
+    command: ["serve", "--master", "--redis-url", "redis://redis:6379"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.21
+        aliases:
+          - osmedeus-web.lab
+          - console.osmedeus.lab
+    labels:
+      lab.role: "osmedeus-web-console"
+      lab.exposed_port: "8002"
+
+  osmedeus-worker:
+    image: j3ssie/osmedeus:latest
+    container_name: osmedeus-worker
+    dns:
+      - 172.28.0.53
+    depends_on:
+      redis:
+        condition: service_healthy
+      osmedeus-server:
+        condition: service_healthy
+      local-dns:
+        condition: service_started
+    volumes:
+      - osmedeus-base:/root/osmedeus-base
+      - osmedeus-workspaces:/root/workspaces-osmedeus
+      - ./reports:/reports
+      - ./scripts:/lab/scripts:ro
+      - ./targets.txt:/lab/targets.txt:ro
+      - ./osmedeus/workflows:/root/osmedeus-base/workflows/lab:ro
+      - ./osmedeus/osm-settings.lab.yaml:/root/osmedeus-base/osm-settings.yaml:ro
+    command: ["worker", "join", "--redis-url", "redis://redis:6379"]
+    restart: unless-stopped
+    networks:
+      osint-lab:
+        ipv4_address: 172.28.0.22
+        aliases:
+          - osmedeus-worker.lab
+    labels:
+      lab.role: "osmedeus-worker"
 
 networks:
   osint-lab:
@@ -139,3 +238,4 @@ networks:
 volumes:
   osmedeus-base:
   osmedeus-workspaces:
+  osmedeus-redis-data:

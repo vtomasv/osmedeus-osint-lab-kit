@@ -1,6 +1,6 @@
 # Laboratorio Didáctico Osmedeus OSINT
 
-Este repositorio contiene un kit educativo para enseñar el uso responsable de [Osmedeus](https://github.com/j3ssie/osmedeus) en clases de OSINT. El laboratorio combina una receta Docker Compose autocontenida, dominios ficticios `.lab`, objetivos web internos, scripts progresivos y evidencia de una ejecución autorizada contra `vtomasv.net`.
+Este repositorio contiene un kit educativo para enseñar el uso responsable de [Osmedeus](https://github.com/j3ssie/osmedeus) en clases de OSINT. El laboratorio combina una receta Docker Compose autocontenida, dominios ficticios `.lab`, objetivos web internos, scripts progresivos, una consola web de Osmedeus y evidencia de una ejecución autorizada contra `vtomasv.net`.
 
 El propósito del material es que los alumnos aprendan una forma de trabajo reproducible: definir alcance, revisar workflows antes de ejecutarlos, limitar el objetivo, guardar evidencia y redactar un informe técnico. El repositorio está diseñado para docencia y no debe usarse para escanear terceros sin autorización explícita.
 
@@ -8,9 +8,10 @@ El propósito del material es que los alumnos aprendan una forma de trabajo repr
 
 | Ruta | Contenido | Uso docente |
 |---|---|---|
-| `compose/docker-compose.yml` | Laboratorio con Osmedeus, DNS local, sitios ficticios y consola de alumno. | Levantar una red aislada para practicar sin depender de objetivos externos. |
+| `compose/docker-compose.yml` | Laboratorio con runner CLI de Osmedeus, consola web, Redis, worker, DNS local, sitios ficticios y consola de alumno. | Levantar una red aislada para practicar, ver workflows y consultar resultados desde UI/API. |
+| `compose/osmedeus/osm-settings.lab.yaml` | Configuración local de la consola web de Osmedeus. | Definir credenciales docentes, workspaces, Redis y exposición local del servidor. |
 | `compose/scripts/` | Scripts de nivel básico, intermedio y avanzado. | Guiar a los alumnos desde dry-run hasta ejecución autorizada. |
-| `docs/guia-didactica-osmedeus.md` | Guía paso a paso para el instructor y los alumnos. | Explicar metodología, comandos, ejercicios y cierre del informe. |
+| `docs/guia-didactica-osmedeus.md` | Guía paso a paso para el instructor y los alumnos. | Explicar metodología, consola web, comandos, ejercicios y cierre del informe. |
 | `console/consola-creativa.md` | Narrativa de consola para presentar la práctica en clase. | Mostrar el flujo de trabajo de forma visual y memorable. |
 | `reports/vtomasv-authorized/` | Evidencia de ejecución real autorizada contra `vtomasv.net`. | Enseñar cómo preservar logs, subdominios observados y run-state. |
 | `legal/chile-osint-notas.md` | Indicaciones legales de uso responsable en Chile. | Reforzar autorización, proporcionalidad y protección de datos. |
@@ -28,6 +29,31 @@ docker compose up -d --build
 
 El laboratorio crea servicios ficticios en una red privada. Los dominios `.lab` se resuelven dentro del entorno Docker mediante el servicio DNS local, por lo que no representan activos reales en Internet.
 
+### Consola web de Osmedeus
+
+El stack web se levanta junto con el laboratorio y expone la UI/API de Osmedeus solamente en loopback del host. Abre la consola desde el navegador local:
+
+```text
+http://127.0.0.1:8002
+```
+
+Las credenciales docentes iniciales son `admin` / `osmedeus-lab-admin`. Son credenciales de laboratorio local, no de producción. Si necesitas usar otro puerto porque `8002` está ocupado, define `OSMEDEUS_WEB_PORT` al iniciar Compose.
+
+```bash
+cd compose
+OSMEDEUS_WEB_PORT=18002 docker compose up -d osmedeus-server osmedeus-worker
+open http://127.0.0.1:18002
+```
+
+La consola permite explorar workflows, runs, workspaces y artefactos a través de la UI y del API de Osmedeus. Además, el laboratorio habilita listado directo de workspaces bajo `/ws/lab-workspaces/` para revisar archivos generados durante una práctica local.
+
+| Componente | Servicio Compose | Uso |
+|---|---|---|
+| Runner CLI estable | `osmedeus` | Mantiene la experiencia de `docker compose exec osmedeus osmedeus ...` para scripts didácticos. |
+| Consola web/API | `osmedeus-server` | Sirve `http://127.0.0.1:8002`, indexa workflows y muestra workspaces/resultados. |
+| Cola distribuida | `redis` | Coordina tareas entre servidor y worker. |
+| Worker | `osmedeus-worker` | Ejecuta tareas enviadas desde la consola web o el API. |
+| Volúmenes compartidos | `osmedeus-base`, `osmedeus-workspaces` | Comparten configuración, base SQLite, workflows y resultados entre CLI, servidor y worker. |
 
 ### Verificación del nodo `osmedeus`
 
@@ -36,8 +62,8 @@ El servicio `osmedeus` está definido como un nodo persistente dentro de Docker 
 ```bash
 cd compose
 docker compose up -d --build
-docker compose ps osmedeus
-docker compose logs --tail=40 osmedeus
+docker compose ps osmedeus osmedeus-server osmedeus-worker redis
+docker compose logs --tail=40 osmedeus osmedeus-server
 docker compose exec osmedeus osmedeus --help
 ./scripts/00-preflight.sh
 ```
@@ -52,11 +78,23 @@ docker compose up -d osmedeus
 docker compose logs -f osmedeus
 ```
 
+Si la consola web no responde, recrea solamente el trío web. Esto conserva los volúmenes de resultados.
+
+```bash
+cd compose
+docker compose up -d redis osmedeus-server osmedeus-worker
+docker compose logs -f osmedeus-server
+curl http://127.0.0.1:8002/health
+```
+
 ## Topología del laboratorio
 
 | Servicio | Dominio ficticio | IP interna | Propósito pedagógico |
 |---|---:|---:|---|
-| `osmedeus` | `osmedeus.lab` | `172.28.0.10` | Ejecutar workflows de Osmedeus. |
+| `osmedeus` | `osmedeus.lab` | `172.28.0.10` | Ejecutar workflows desde CLI y scripts. |
+| `redis` | `redis.lab` | `172.28.0.20` | Cola interna para coordinación master/worker. |
+| `osmedeus-server` | `console.osmedeus.lab` | `172.28.0.21` | Consola web/API para workflows, runs, workspaces e informes. |
+| `osmedeus-worker` | `osmedeus-worker.lab` | `172.28.0.22` | Worker distribuido para ejecuciones lanzadas desde la UI/API. |
 | `web-alpha` | `web-alpha.lab` | `172.28.0.11` | Objetivo web básico. |
 | `web-beta` | `web-beta.lab` | `172.28.0.12` | Objetivo web intermedio con rutas de práctica. |
 | `blog-gamma` | `blog-gamma.lab` | `172.28.0.13` | Inventario de contenido público ficticio. |

@@ -1,0 +1,64 @@
+# Configuración local del laboratorio Osmedeus OSINT.
+# No reutilizar estas credenciales en producción: están pensadas para docencia local.
+
+environment:
+  binaries: "{{base_folder}}/external-binaries"
+  external_data: "{{base_folder}}/external-data"
+  external_configs: "{{base_folder}}/external-configs"
+  workspaces: /root/workspaces-osmedeus
+  workflows: "{{base_folder}}/workflows"
+  snapshot: "{{base_folder}}/snapshot"
+
+database:
+  db_engine: sqlite
+  db_path: "{{base_folder}}/database-osm.sqlite"
+  connection_timeout: 60
+
+server:
+  host: "0.0.0.0"
+  port: 8002
+  ui_path: "{{base_folder}}/ui/"
+  workspace_prefix_key: "lab-workspaces"
+  enabled_auth_api: true
+  auth_api_key: "osmedeus-lab-api-key-change-me"
+  simple_user_map_key:
+    admin: "osmedeus-lab-admin"
+  jwt:
+    secret_signing_key: "osmedeus-lab-jwt-secret-change-me-2026"
+    expiration_minutes: 1440
+
+scan_tactic:
+  aggressive: 20
+  default: 8
+  gently: 3
+
+redis:
+  host: redis
+  port: 6379
+  username: ""
+  password: ""
+  db: 0
+  connection_timeout: 60
+
+global_variables: []
+
+notification:
+  telegram:
+    enabled: false
+    bot_token: ""
+    chat_id: 0
+
+cdn_storage:
+  enabled: false
+  access_key_id: ""
+  secret_access_key: ""
+  bucket: ""
+  region: ""
+  endpoint: ""
+
+llm:
+  enabled: false
+  provider: openai
+  api_key: ""
+  model: "gpt-4"
+  base_url: ""
