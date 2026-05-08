@@ -112,17 +112,10 @@ services:
       - ./scripts:/lab/scripts:ro
       - ./targets.txt:/lab/targets.txt:ro
       - ./osmedeus/workflows:/root/osmedeus-base/workflows/lab:ro
-    working_dir: /lab
-    entrypoint: ["/bin/sh", "-c"]
-    command: |
-      set -eu
-      echo "[osmedeus-lab] nodo Osmedeus iniciado como servicio persistente"
-      echo "[osmedeus-lab] fecha UTC: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-      echo "[osmedeus-lab] binario: $(command -v osmedeus || true)"
-      osmedeus --help >/tmp/osmedeus-help.startup.log 2>&1 || true
-      echo "[osmedeus-lab] listo; use: docker compose exec osmedeus osmedeus --help"
-      trap 'echo "[osmedeus-lab] apagando nodo"; exit 0' INT TERM
-      while true; do sleep 3600 & wait $!; done
+    # La imagen oficial define ENTRYPOINT ["osmedeus"]. Para que el laboratorio
+    # quede disponible para `docker compose exec`, se reemplaza por un proceso
+    # pasivo y estable, sin mezclar /bin/sh -c con command multiline.
+    entrypoint: ["tail", "-f", "/dev/null"]
     healthcheck:
       test: ["CMD-SHELL", "command -v osmedeus >/dev/null 2>&1"]
       interval: 20s

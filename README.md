@@ -31,7 +31,7 @@ El laboratorio crea servicios ficticios en una red privada. Los dominios `.lab` 
 
 ### Verificación del nodo `osmedeus`
 
-El servicio `osmedeus` está definido como un nodo persistente dentro de Docker Compose. A diferencia de ejecutar la imagen oficial como comando puntual, este laboratorio sobreescribe el `ENTRYPOINT` con `/bin/sh -c`, imprime un banner de arranque, ejecuta una comprobación ligera de la CLI y queda en espera para que los scripts puedan usar `docker compose exec`.
+El servicio `osmedeus` está definido como un nodo persistente dentro de Docker Compose. La imagen oficial declara `ENTRYPOINT ["osmedeus"]`, por lo que no conviene combinarla con `command` multiline ni con `/bin/sh -c`: algunas versiones de Docker Compose pueden partir el comando y provocar un ciclo de reinicio. Este laboratorio reemplaza el entrypoint por `tail -f /dev/null`, un proceso pasivo y estable, y deja la CLI disponible mediante `docker compose exec osmedeus osmedeus ...`.
 
 ```bash
 cd compose
@@ -42,7 +42,7 @@ docker compose exec osmedeus osmedeus --help
 ./scripts/00-preflight.sh
 ```
 
-Si aparece `service "osmedeus" is not running`, elimina el contenedor antiguo y vuelve a levantar solo ese nodo. El comando no borra evidencias ni informes, pero recrea el servicio con la definición persistente.
+Si aparece `service "osmedeus" is not running` o el contenedor queda en estado `Restarting`, elimina el contenedor antiguo y vuelve a levantar solo ese nodo. El comando no borra evidencias ni informes, pero recrea el servicio con la definición persistente corregida.
 
 ```bash
 cd compose
