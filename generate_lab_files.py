@@ -378,23 +378,36 @@ w(C / 'osmedeus/osm-settings.lab.yaml', r'''
     # Configuración local del laboratorio Osmedeus OSINT.
     # No reutilizar estas credenciales en producción: están pensadas para docencia local.
 
-    environment:
-      binaries: "{{base_folder}}/external-binaries"
-      external_data: "{{base_folder}}/external-data"
-      external_configs: "{{base_folder}}/external-configs"
+    # Osmedeus actual resuelve rutas desde `environments`. Se mantiene además
+    # `environment` como bloque de compatibilidad para imágenes antiguas que aún lo lean.
+    environments:
+      external_binaries_path: "/root/osmedeus-base/external-binaries"
+      external_data: "/root/osmedeus-base/external-data"
+      external_configs: "/root/osmedeus-base/external-configs"
       workspaces: /root/workspaces-osmedeus
-      workflows: "{{base_folder}}/workflows"
-      snapshot: "{{base_folder}}/snapshot"
+      workflows: "/root/osmedeus-base/workflows"
+      snapshot: "/root/osmedeus-base/snapshot"
+      markdown_report_templates: "/root/osmedeus-base/markdown-templates"
+      external_agent_configs: "/root/osmedeus-base/agents"
+      external_scripts: "/root/osmedeus-base/scripts"
+
+    environment:
+      binaries: "/root/osmedeus-base/external-binaries"
+      external_data: "/root/osmedeus-base/external-data"
+      external_configs: "/root/osmedeus-base/external-configs"
+      workspaces: /root/workspaces-osmedeus
+      workflows: "/root/osmedeus-base/workflows"
+      snapshot: "/root/osmedeus-base/snapshot"
 
     database:
       db_engine: sqlite
-      db_path: "{{base_folder}}/database-osm.sqlite"
+      db_path: "/root/osmedeus-base/database-osm.sqlite"
       connection_timeout: 60
 
     server:
       host: "0.0.0.0"
       port: 8002
-      ui_path: "{{base_folder}}/ui/"
+      ui_path: "/root/osmedeus-base/ui/"
       workspace_prefix_key: "lab-workspaces"
       enabled_auth_api: true
       auth_api_key: "osmedeus-lab-api-key-change-me"
@@ -417,6 +430,9 @@ w(C / 'osmedeus/osm-settings.lab.yaml', r'''
       db: 0
       connection_timeout: 60
 
+    global_vars:
+      custom_vars: []
+
     global_variables: []
 
     notification:
@@ -425,6 +441,14 @@ w(C / 'osmedeus/osm-settings.lab.yaml', r'''
         bot_token: ""
         chat_id: 0
 
+    storage:
+      enabled: false
+      access_key_id: ""
+      secret_access_key: ""
+      bucket: ""
+      region: ""
+      endpoint: ""
+
     cdn_storage:
       enabled: false
       access_key_id: ""
@@ -432,6 +456,10 @@ w(C / 'osmedeus/osm-settings.lab.yaml', r'''
       bucket: ""
       region: ""
       endpoint: ""
+
+    llm_config:
+      enabled_tool_call: false
+      llm_providers: []
 
     llm:
       enabled: false

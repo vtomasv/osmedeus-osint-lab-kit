@@ -87,6 +87,19 @@ docker compose logs -f osmedeus-server
 curl http://127.0.0.1:8002/health
 ```
 
+Si al refrescar **Workflows** aparece `500: failed to load workflows: failed to scan workflows directory: lstat : no such file or directory`, la consola está usando una configuración antigua donde la ruta de workflows quedó vacía. Actualiza el repositorio y recrea el servidor/worker para que carguen `compose/osmedeus/osm-settings.lab.yaml` con la sección `environments` corregida.
+
+```bash
+cd osmedeus-osint-lab-kit
+git pull --ff-only
+cd compose
+docker compose rm -sf osmedeus-server osmedeus-worker
+docker compose up -d redis osmedeus-server osmedeus-worker
+./scripts/00-preflight.sh
+```
+
+No borres los volúmenes salvo que quieras reiniciar completamente el laboratorio; los workspaces e informes viven en `osmedeus-workspaces`.
+
 ## Topología del laboratorio
 
 | Servicio | Dominio ficticio | IP interna | Propósito pedagógico |
